@@ -1,0 +1,59 @@
+runtime:
+  work_root: work
+
+drive:
+  require_persistence: false
+  require_narrow_scope: false
+
+llm:
+  gemini_models: [gemini-3.5-flash, gemini-3.5-flash-lite, gemini-3.1-flash-lite]
+  groq_models: [openai/gpt-oss-120b, openai/gpt-oss-20b]
+  request_timeout: 120
+  max_retries: 1
+  retry_base_seconds: 2.0
+
+youtube:
+  category_id: "27"
+  thumbnail_required: false
+
+render:
+  width: 1920
+  height: 1080
+  fps: 30
+  crf: 20
+  preset: veryfast
+  chunk_workers: 2
+
+audiobook:
+  books_root: assets/audiobook/books
+  asset_root: assets/audiobook
+  video_library_folder_name: Audiobook Videos
+  video_library_folder_id: ""
+  video_extensions: [.mp4, .mov, .m4v, .mkv, .webm]
+  target_minutes: 30
+  test_minutes: 3
+  wpm: 130
+  tts_profile: audiobook
+  background_volume: 0.08
+  music_volume: 0.08
+  intro_video: intro.mp4
+  avatar_video: avatar.mp4
+  background_video: background.mp4
+  background_music: background_music.mp3
+  thumbnail_template: thumbnail_template.png
+  thumbnail_backgrounds_dir: thumbnail_backgrounds
+  thumbnail_cover_side: random
+  thumbnail_cover_box_left: [60, 70, 500, 650]
+  thumbnail_cover_box_right: [780, 70, 1220, 650]
+  thumbnail_text_box_left: [560, 90, 1230, 640]
+  thumbnail_text_box_right: [50, 90, 720, 640]
+  thumbnail_hook_words_min: 3
+  thumbnail_hook_words_max: 5
+  strict_optional_assets: false
+  allow_unknown_rights: false
+  max_attempts: 3
+  stale_hours: 6
+  budgets:
+    gemini_calls: 300
+    drive_upload_mb: 6000
+    youtube_units: 9000

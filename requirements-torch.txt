@@ -1,0 +1,4 @@
+# CPU-only PyTorch (Kokoro TTS depends on it). Kept in its own file so the
+# pip cache key covers it and the ~200 MB download is not repeated every run.
+--index-url https://download.pytorch.org/whl/cpu
+torch>=2.2,<3

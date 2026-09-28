@@ -1,0 +1,11 @@
+# Secrets
+
+Required audiobook production secrets:
+- `GEMINI_API_KEY` (or `GROQ_API_KEY` fallback)
+- `AUDIOBOOK_DRIVE_CREDENTIALS`
+- `AUDIOBOOK_DRIVE_ROOT_FOLDER_ID`
+- `YOUTUBE_TOKEN_JSON_BOOKS`
+
+Optional:
+- `AUDIOBOOK_VIDEO_LIBRARY_FOLDER_ID`
+- `TAVILY_API_KEY`

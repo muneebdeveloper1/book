@@ -1,0 +1,17 @@
+google-api-python-client>=2.150.0
+google-auth>=2.35.0
+google-auth-oauthlib>=1.2.1
+requests>=2.32.3
+PyYAML>=6.0.2
+pydantic>=2.9.2
+python-dateutil>=2.9.0.post0
+Pillow>=10.4.0
+kokoro>=0.9.4,<1.0
+soundfile>=0.12.1
+numpy>=1.26.0
+
+google-genai>=1.0.0
+beautifulsoup4>=4.12.3
+# Test runner: every workflow runs `pytest -m "not e2e"` before producing anything.
+pytest>=8.0
+

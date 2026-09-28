@@ -1,0 +1,1 @@
+Add 2-3 plain 1280x720 JPG/PNG thumbnail backgrounds here. The pipeline randomly selects one per production. Keep the book-free area compatible with left/right cover placement. The included thumbnail_template.png remains the fallback if this folder is empty.
