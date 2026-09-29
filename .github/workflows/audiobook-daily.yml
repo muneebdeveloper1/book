@@ -8,6 +8,7 @@ on:
         required: false
         type: boolean
         default: false
+
   schedule:
     - cron: '0 2 * * *'
 
@@ -19,8 +20,10 @@ jobs:
   produce:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+
     steps:
       - uses: actions/checkout@v5
+
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
@@ -28,29 +31,60 @@ jobs:
           cache-dependency-path: |
             requirements.txt
             requirements-torch.txt
-      - run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
-      - uses: actions/cache@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg espeak-ng
+
+      - name: Cache Hugging Face models
+        uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface
           key: kokoro-${{ runner.os }}-v1
-      - run: pip install -r requirements-torch.txt -r requirements.txt
-      - run: python -m compileall -q src scripts
-      - run: python -m pytest -q -m "not e2e"
+
+      # Install PyTorch from the PyTorch CPU repository ONLY.
+      - name: Install PyTorch
+        run: |
+          pip install --index-url https://download.pytorch.org/whl/cpu -r requirements-torch.txt
+
+      # Install all normal Python packages from PyPI.
+      # This fixes google-api-python-client installation.
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Validate Python source
+        run: |
+          python -m compileall -q src scripts
+
+      - name: Run tests
+        run: |
+          python -m pytest -q -m "not e2e"
+
       - name: Produce audiobook
         env:
           PYTHONPATH: ${{ github.workspace }}
           DRIVE_REQUIRE_PERSISTENCE: 'true'
+
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+
           AUDIOBOOK_DRIVE_CREDENTIALS: ${{ secrets.AUDIOBOOK_DRIVE_CREDENTIALS }}
           AUDIOBOOK_DRIVE_ROOT_FOLDER_ID: ${{ secrets.AUDIOBOOK_DRIVE_ROOT_FOLDER_ID }}
           AUDIOBOOK_VIDEO_LIBRARY_FOLDER_ID: ${{ secrets.AUDIOBOOK_VIDEO_LIBRARY_FOLDER_ID }}
+
           YOUTUBE_TOKEN_JSON_BOOKS: ${{ secrets.YOUTUBE_TOKEN_JSON_BOOKS }}
+
           YOUTUBE_VISIBILITY_BOOKS: ${{ inputs.test && 'private' || vars.YOUTUBE_VISIBILITY_BOOKS || 'private' }}
+
           AUDIOBOOK_TARGET_MINUTES: ${{ vars.AUDIOBOOK_TARGET_MINUTES || '30' }}
           AUDIOBOOK_TTS_PROFILE: ${{ vars.AUDIOBOOK_TTS_PROFILE || 'audiobook' }}
-        run: python scripts/pipeline.py --channel audiobook ${{ inputs.test && '--test' || '' }}
+
+        run: |
+          python scripts/pipeline.py --channel audiobook ${{ inputs.test && '--test' || '' }}
+
       - name: Upload job state
         if: always()
         uses: actions/upload-artifact@v4
